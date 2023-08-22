@@ -64,17 +64,17 @@ export default function FileUpload() {
         <section>
         <div className="mt-4">
           <h3>File Details:</h3>
-          <p className="text-primary dark:text-primary-dark">
-            Name: {fileDetails.name}
+          <p className="font-bold  text-primary dark:text-primary-dark">
+            Name: <span>{fileDetails.name}</span>
           </p>
-          <p className="text-primary dark:text-primary-dark">
-            SHA256 Hash: {fileDetails.hash}
+          <p className="text-primary font-bold dark:text-primary-dark break-all">
+            SHA256 Hash: <span>{fileDetails.hash}</span>
           </p>
-          <p>
-            Type: {fileDetails.type}
+          <p className="font-bold">
+            Type: <span>{fileDetails.type}</span>
           </p>
-          <p className="">
-            Size: {fileDetails.size} bytes
+          <p className="font-bold">
+            Size: <span>{fileDetails.size} bytes</span>
           </p>
         </div>
         <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">

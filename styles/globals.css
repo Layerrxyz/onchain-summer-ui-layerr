@@ -38,3 +38,7 @@ h3 {
 p {
   @apply text-primary dark:text-primary-dark
 }
+
+span {
+  @apply font-normal
+}
