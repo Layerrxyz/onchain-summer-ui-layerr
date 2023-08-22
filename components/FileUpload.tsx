@@ -1,9 +1,15 @@
 import { useState, useRef } from "react";
+import {
+  computeSHA256,
+  splitFileIntoChunks,
+} from "../utilities/transformations";
 
 type FileDetailsType = {
   name: string;
   type: string;
   size: number;
+  hash: string;
+chunks: Blob[];
 } | null;
 
 export default function FileUpload() {
@@ -12,9 +18,9 @@ export default function FileUpload() {
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
   const handleClick = () => {
-   if (hiddenFileInput.current) {
-    hiddenFileInput.current.click();
-  }
+    if (hiddenFileInput.current) {
+      hiddenFileInput.current.click();
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,36 +28,62 @@ export default function FileUpload() {
     handleFile(fileUploaded);
   };
 
-  const handleFile = (file:any) => {
+  const handleFile = async (file: any) => {
     if (file) {
+        const fileName = file.name;
+        const fileHash = await computeSHA256(file);
+        const fileChunks = splitFileIntoChunks(file, 24575);
+        console.log(fileChunks);    
       setFileDetails({
-        name: file.name,
+        name: fileName,
         type: file.type,
         size: file.size,
+        hash: fileHash,
+        chunks: fileChunks
       });
     }
   };
 
   return (
     <div className="flex items-center flex-col p-4">
-        <>
-      <button className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2" onClick={handleClick}>
-        Upload a file
-      </button>
-      <input
-        type="file"
-        onChange={handleChange}
-        ref={hiddenFileInput}
-        style={{display: 'none'}} // Make the file input element invisible
-      />
-    </>
+      <>
+        <button
+          className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
+          onClick={handleClick}
+        >
+          {fileDetails ? 'Choose different file' : 'Upload a file'}
+        </button>
+        <input
+          type="file"
+          onChange={handleChange}
+          ref={hiddenFileInput}
+          style={{ display: "none" }} // Make the file input element invisible
+        />
+      </>
       {fileDetails && (
+        <section>
         <div className="mt-4">
-          <h3 className="text-lg font-bold">File Details:</h3>
-          <p className="text-primary dark:text-primary-dark">Name: {fileDetails.name}</p>
-          <p className="text-primary dark:text-primary-dark">Type: {fileDetails.type}</p>
-          <p className="text-primary dark:text-primary-dark">Size: {fileDetails.size} bytes</p>
+          <h3>File Details:</h3>
+          <p className="text-primary dark:text-primary-dark">
+            Name: {fileDetails.name}
+          </p>
+          <p className="text-primary dark:text-primary-dark">
+            SHA256 Hash: {fileDetails.hash}
+          </p>
+          <p>
+            Type: {fileDetails.type}
+          </p>
+          <p className="">
+            Size: {fileDetails.size} bytes
+          </p>
         </div>
+        <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">
+            <p>
+            {`File has been split into ${fileDetails.chunks.length - 1} chunks`}
+            </p>
+            <button className="text-primary dark:text-primary-dark  border-[1px] w-[8rem]">Add to Library</button>
+        </div>
+        </section>
       )}
     </div>
   );

@@ -31,3 +31,10 @@ a {
   cursor: pointer;
 }
 
+h3 {
+  @apply font-bold text-lg text-primary dark:text-primary-dark
+}
+
+p {
+  @apply text-primary dark:text-primary-dark
+}
