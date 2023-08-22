@@ -1,31 +1,15 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectWallet} from '../components/ConnectWallet';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import styles from '../styles/Home.module.css';
 import {useEffect, useState} from "react";
+import FileUpload from '../components/FileUpload';
+import Heading from '../components/Heading';
+import ThemeSwitcher from '../components/ThemeSwitcher';
 
 const Home: NextPage = () => {
-  const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(() => {
-    const initialTheme = window.localStorage.getItem('theme');
-    if (initialTheme === 'dark') setDarkMode(true);
-  }, []);
-
-
-  useEffect(() => {
-    if (darkMode) {
-      window.localStorage.setItem('theme', 'dark');
-      document.documentElement.classList.add('dark');
-    } else {
-      window.localStorage.setItem('theme', 'light');
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
-  
   return (
-    <div className="bg-white dark:bg-black">
+    <div>
       <Head>
         <title>OnChain Library</title>
         <meta
@@ -35,26 +19,21 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className={styles.main}>
-        <button onClick={()=>{setDarkMode(!darkMode)}}>Toggle Dark Mode</button>
-        <ConnectButton />
-
-        <h1 className={styles.title}>
-          Welcome to <a href="">RainbowKit</a> + <a href="">wagmi</a> +{' '}
-          <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-      </main>
-
-      <footer className={styles.footer}>
-        <a href="https://layerr.xyz" rel="noopener noreferrer" target="_blank">
-          Made with ❤️ by your frens at Layerr
+      <main className="min-h-screen bg-white dark:bg-black">
+        <section className='p-4 md:p-8 lg:p-24'>
+        <div className='flex justify-between gap-2'>
+          <ThemeSwitcher />
+        <ConnectWallet />
+        </div>
+        <Heading/>
+        <FileUpload/>
+        </section>
+      <footer className="bg-white dark:bg-black flex justify-center items-center">
+        <a href="https://layerr.xyz" className="text-primary dark:text-primary-dark" rel="noopener noreferrer" target="_blank">
+          Made with ❤️ by your friends at Layerr
         </a>
       </footer>
+      </main>
     </div>
   );
 };
