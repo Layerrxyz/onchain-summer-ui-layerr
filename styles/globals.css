@@ -17,3 +17,17 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.moon path {
+  @apply dark:fill-white;
+}
+
+.sun path {
+  @apply fill-white dark:fill-[#5A6069];
+}
+
+.moon,
+.sun {
+  cursor: pointer;
+}
+

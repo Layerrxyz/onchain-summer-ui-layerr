@@ -9,12 +9,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'text-primary':{
+        'primary':{
           DEFAULT: "#000000",
           dark: "#ffffff",
-        }
-      }
-
+        },
+        'blue':'#0E76FD',
+      'grey':'#7C8187',
+      'slider-grey': '#5A6069',
+      },
     },
   },
   plugins: [],
