@@ -5,6 +5,8 @@ import {useEffect, useState} from "react";
 import FileUpload from '../components/FileUpload';
 import Heading from '../components/Heading';
 import ThemeSwitcher from '../components/ThemeSwitcher';
+import logo from '../assets/logo.png';
+import Image from 'next/image';
 
 const Home: NextPage = () => {
 
@@ -29,8 +31,9 @@ const Home: NextPage = () => {
         <FileUpload/>
         </section>
       <footer className="bg-white dark:bg-black flex justify-center items-center">
-        <a href="https://layerr.xyz" className="text-primary dark:text-primary-dark" rel="noopener noreferrer" target="_blank">
-          Made with ❤️ by your friends at Layerr
+        <p>OnChain Library powered by{' '}</p>
+        <a href="https://layerr.xyz" className="text-primary dark:text-primary-dark ml-1" rel="noopener noreferrer" target="_blank">
+          <Image width={80} src={logo} alt="layerr icon"></Image>
         </a>
       </footer>
       </main>
