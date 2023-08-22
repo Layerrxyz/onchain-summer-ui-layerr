@@ -21,7 +21,7 @@ const Home: NextPage = () => {
 
       <main className="min-h-screen bg-white dark:bg-black">
         <section className='p-4 md:p-8 lg:p-24'>
-        <div className='flex justify-between gap-2'>
+        <div className='sm:flex justify-between mb-4'>
           <ThemeSwitcher />
         <ConnectWallet />
         </div>

@@ -36,7 +36,7 @@ export const ConnectWallet: FC = () => {
             {(() => {
               if (!connected) {
                 return (
-                  <button className="bg-blue" onClick={openConnectModal} type="button">
+                  <button className="bg-blue py-2 px-6 rounded-xl font-bold text-white" onClick={openConnectModal} type="button">
                     Connect Wallet
                   </button>
                 );
@@ -49,10 +49,10 @@ export const ConnectWallet: FC = () => {
                 );
               }
               return (
-                <div style={{ display: 'flex', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 12, justifyContent:'flex-end' }}>
                   <button
                     onClick={openChainModal}
-                    className="bg-blue"
+                    className="bg-blue text-white font-bold  text-xs md:text-base  flex items-center rounded-xl px-4 py-1.5 lg:px-8 lg:py-2 "
                     type="button"
                   >
                     {chain.hasIcon && (
@@ -77,11 +77,8 @@ export const ConnectWallet: FC = () => {
                     )}
                     {chain.name}
                   </button>
-                  <button onClick={openAccountModal} className="bg-blue rounded-xl text-xs px-4 py-2 text-primary dark:text-primary-dark" type="button">
+                  <button onClick={openAccountModal} className="bg-blue rounded-xl text-xs md:text-base  px-4 py-1.5 lg:px-8 lg:py-2 text-white font-bold" type="button">
                     {account.displayName} 
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ''}
                   </button>
                 </div>
               );
