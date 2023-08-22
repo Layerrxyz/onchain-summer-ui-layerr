@@ -22,7 +22,7 @@ export default function ThemeSwitcher() {
   }, [darkMode]);
 
   return (
-    <div className="flex items-center mb-8 gap-2">
+    <div className="flex items-center gap-2 mb-2 sm:mb-0">
       <Image alt="moon icon" src={Moon} onClick={()=>{setDarkMode(true)}} className="moon" />
       <div className="bg-slider-grey w-14 h-6 rounded-xl flex items-center  transition-all ">
         <div
@@ -30,7 +30,7 @@ export default function ThemeSwitcher() {
           className="bg-white cursor-pointer rounded-full w-4 h-4 m-1 translate-x-8 dark:translate-x-0 transition-all"
         ></div>
       </div>
-      <Image alt="sun icon" src={Sun} onClick={()=>{setDarkMode(false)}} className="sun" />
+      <Image alt="sun icon" height={20} width={20} src={Sun} onClick={()=>{setDarkMode(false)}} className="sun" />
     </div>
   );
 }
