@@ -31,7 +31,6 @@ export default function FileUpload() {
         signer
       );
       console.log(contract);
-      // REPLACE ADDRESS WITH account.address TO GET THE FILES UPLOADED BY THE USER
       const filesUploaded = await contract.searchCatalogByUploader(
         account.address
       );
@@ -64,11 +63,9 @@ export default function FileUpload() {
 
       let receipt = await tx.wait();
 
-      // Search for the AssetAdded event in the logs
       let assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
       console.log(assetAddedEvent);
 
-      // Extract the newAssetId from the event
       let newAssetId = assetAddedEvent.args[0].toNumber();
       console.log(newAssetId);
 
@@ -89,7 +86,6 @@ export default function FileUpload() {
         await tx1.wait();
       }
 
-      // If there is a finalize step in your contract, call that as well
       const finaltx = await contract.finalizeAsset(newAssetId);
       await finaltx.wait();
       console.log("Asset uploaded successfully");
