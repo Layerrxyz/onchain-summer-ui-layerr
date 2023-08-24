@@ -36,7 +36,7 @@ export const ConnectWallet: FC = () => {
               if (!connected) {
                 return (
                   <button
-                    className="bg-blue py-2 px-6 rounded-xl font-bold text-white"
+                    className="bg-blue border-none py-2 px-6 rounded-xl font-bold text-white"
                     onClick={openConnectModal}
                     type="button"
                   >
@@ -47,7 +47,7 @@ export const ConnectWallet: FC = () => {
               if (chain.unsupported) {
                 return (
                   <button
-                    className="bg-blue py-2 px-6 rounded-xl font-bold text-white"
+                    className="bg-blue py-2 border-none px-6 rounded-xl font-bold text-white"
                     onClick={openChainModal}
                     type="button"
                   >
@@ -65,7 +65,7 @@ export const ConnectWallet: FC = () => {
                 >
                   <button
                     onClick={openChainModal}
-                    className="bg-blue text-white font-bold  text-xs md:text-base  flex items-center rounded-xl px-4 py-1.5 lg:px-8 lg:py-2 "
+                    className="bg-blue text-white font-bold border-none  text-xs md:text-base  flex items-center rounded-xl px-4 py-1.5 lg:px-8 lg:py-2 "
                     type="button"
                   >
                     {chain.hasIcon && (
@@ -92,7 +92,7 @@ export const ConnectWallet: FC = () => {
                   </button>
                   <button
                     onClick={openAccountModal}
-                    className="bg-blue rounded-xl text-xs md:text-base  px-4 py-1.5 lg:px-8 lg:py-2 text-white font-bold"
+                    className="bg-blue rounded-xl text-xs md:text-base border-none  px-4 py-1.5 lg:px-8 lg:py-2 text-white font-bold"
                     type="button"
                   >
                     {account.displayName}
