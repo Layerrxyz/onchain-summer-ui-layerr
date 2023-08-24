@@ -8,6 +8,7 @@ import uploadabi from "../assets/onchainLibrary.json";
 import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { log } from "console";
+import Library from "./Library";
 type FileDetailsType = {
   name: string;
   type: string;
@@ -22,6 +23,9 @@ export default function FileUpload() {
   const [filesUploaded, setFilesUploaded] = useState<any[]>([]);
   const signer = useEthersSigner();
   const account = useAccount();
+  const [libraryAdded, setLibraryAdded] = useState(false);
+  const [newAssetId, setNewAssetId] = useState<number | null>(null);
+  const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(0);
 
   useEffect(() => {
     const logAssets = async () => {
@@ -46,49 +50,125 @@ export default function FileUpload() {
 
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
+  // const contract = new ethers.Contract(
+  //   "0x00000000009A2E85957ae69A3b96efece482d15C",
+  //   uploadabi,
+  //   signer
+  // );
+
+  // const addToLibrary = async () => {
+  //   if (!fileDetails) return;
+
+  //   try {
+  //     console.log(fileDetails.hash);
+  //     const tx = await contract.addAsset(
+  //       fileDetails.name,
+  //       `0x${fileDetails.hash}`,
+  //       fileDetails.chunks.length
+  //     );
+
+  //     const receipt = await tx.wait();
+  //     const assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
+  //     console.log(assetAddedEvent);
+  //     const id = assetAddedEvent.args[0].toNumber();
+  //     setLibraryAdded(true);
+  //     setNewAssetId(id);
+  //   } catch (error) {
+  //     handleContractError(error);
+  //   }
+  // };
+
+  // const uploadChunk = async (chunk: Blob, index: number) => {
+  //   try {
+  //     // Read the blob as an ArrayBuffer
+  //     const arrayBuffer = await new Response(chunk).arrayBuffer();
+
+  //     // Convert the ArrayBuffer to a Uint8Array
+  //     const uint8Array = new Uint8Array(arrayBuffer);
+
+  //     // Convert the Uint8Array to a hex string
+  //     const chunkBytes = ethers.utils.hexlify(uint8Array);
+
+  //     // Upload the chunk to the blockchain
+  //     console.log(newAssetId, index, chunkBytes)
+  //     // const tx = await contract.uploadChunk(newAssetId, index, chunkBytes);
+  //     // await tx.wait();
+  //     setChunksUploadedCount((prev) => prev + 1);
+  //   } catch (error) {
+  //     handleContractError(error);
+  //   }
+  // };
+
+  // const finalizeAsset = async (newAssetId: number) => {
+  //   try {
+  //     const tx = await contract.finalizeAsset(newAssetId);
+  //     await tx.wait();
+  //     console.log("Asset uploaded successfully");
+  //   } catch (error) {
+  //     handleContractError(error);
+  //   }
+  // };
+
+  // const handleContractError = (e: any) => {
+  //   if (e.message.includes("denied transaction signature")) {
+  //     console.error("Transaction was rejected by the user.");
+  //   } else {
+  //     console.error("An error occurred:", e.message);
+  //   }
+  // };
+
   const addToLibrary = async () => {
-    if (fileDetails) {
-      const contract = new ethers.Contract(
-        "0x00000000009A2E85957ae69A3b96efece482d15C",
-        uploadabi,
-        signer
-      );
+    try {
+      if (fileDetails) {
+        const contract = new ethers.Contract(
+          "0x00000000009A2E85957ae69A3b96efece482d15C",
+          uploadabi,
+          signer
+        );
 
-      console.log(fileDetails.hash);
-      const tx = await contract.addAsset(
-        fileDetails.name,
-        `0x${fileDetails.hash}`,
-        fileDetails.chunks.length
-      );
+        console.log(fileDetails.hash);
+        const tx = await contract.addAsset(
+          fileDetails.name,
+          `0x${fileDetails.hash}`,
+          fileDetails.chunks.length
+        );
 
-      let receipt = await tx.wait();
+        let receipt = await tx.wait();
 
-      let assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
-      console.log(assetAddedEvent);
+        let assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
+        console.log(assetAddedEvent);
 
-      let newAssetId = assetAddedEvent.args[0].toNumber();
-      console.log(newAssetId);
+        let newAssetId = assetAddedEvent.args[0].toNumber();
+        console.log(newAssetId);
 
-      for (let i = 0; i < fileDetails.chunks.length; i++) {
-        const chunk = fileDetails.chunks[i];
+        for (let i = 0; i < fileDetails.chunks.length; i++) {
+          const chunk = fileDetails.chunks[i];
 
-        // Read the blob as an ArrayBuffer
-        const arrayBuffer = await new Response(chunk).arrayBuffer();
+          // Read the blob as an ArrayBuffer
+          const arrayBuffer = await new Response(chunk).arrayBuffer();
 
-        // Convert the ArrayBuffer to a Uint8Array
-        const uint8Array = new Uint8Array(arrayBuffer);
+          // Convert the ArrayBuffer to a Uint8Array
+          const uint8Array = new Uint8Array(arrayBuffer);
 
-        // Convert the Uint8Array to a hex string
-        const chunkBytes = ethers.utils.hexlify(uint8Array);
+          // Convert the Uint8Array to a hex string
+          const chunkBytes = ethers.utils.hexlify(uint8Array);
 
-        // Upload the chunk to the blockchain
-        const tx1 = await contract.uploadChunk(newAssetId, i, chunkBytes);
-        await tx1.wait();
+          // Upload the chunk to the blockchain
+          const tx1 = await contract.uploadChunk(newAssetId, i, chunkBytes);
+          await tx1.wait();
+        }
+
+        const finaltx = await contract.finalizeAsset(newAssetId);
+        await finaltx.wait();
+        console.log("Asset uploaded successfully");
       }
-
-      const finaltx = await contract.finalizeAsset(newAssetId);
-      await finaltx.wait();
-      console.log("Asset uploaded successfully");
+    } catch (e) {
+      const error = e as Error;
+      if (error.message.includes("denied transaction signature")) {
+        console.error("Transaction was rejected by the user.");
+      } else {
+        console.error("An error occurred:", error.message);
+      }
     }
   };
 
@@ -121,13 +201,13 @@ export default function FileUpload() {
 
   return (
     <div className="flex items-center flex-col p-4">
-      <div>
-        filesUploaded:{" "}
-        {filesUploaded.map((file) => {
+      <div className="my-4">
+        {signer && <p>Files uploaded to Base: </p>}
+        {filesUploaded.map((file, index) => {
           return (
-            <div key={file.expectedSHA256Hash}>
+            <div key={index}>
               <p>{file.name}</p>
-              <p>{file.expectedSHA256Hash}</p>
+              {/* <p>{file.expectedSHA256Hash}</p> */}
             </div>
           );
         })}
@@ -151,7 +231,7 @@ export default function FileUpload() {
         </>
       )}
 
-      {fileDetails && (
+      {fileDetails && !libraryAdded && (
         <section>
           <div className="mt-4">
             <h3>File Details:</h3>
@@ -183,6 +263,16 @@ export default function FileUpload() {
           </div>
         </section>
       )}
+        {libraryAdded &&
+        fileDetails &&
+        (
+          <button className="border-solid border-[1px]" disabled={chunksUploadedCount !== fileDetails.chunks.length} onClick={() => finalizeAsset(newAssetId!)}>
+            Finalize Asset ID
+          </button>
+        )}
+      {/* {libraryAdded && fileDetails && (
+        <Library uploadChunk={uploadChunk} chunks={fileDetails.chunks} />
+      )} */}
     </div>
   );
 }

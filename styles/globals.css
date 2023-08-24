@@ -42,3 +42,7 @@ p {
 span {
   @apply font-normal
 }
+
+button {
+  @apply border-solid border-[1px] text-primary dark:text-primary-dark bg-transparent
+}
