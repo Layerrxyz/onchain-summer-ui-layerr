@@ -161,9 +161,11 @@ export default function FileUpload() {
 
   if (!signer)
     return (
-      <h2 className="text-primary dark:text-primary-dark">
+  <div className="h-[50vh] items-center justify-center flex">
+      <h2 className="text-center text-primary dark:text-primary-dark">
         Connect your wallet to upload a file.
       </h2>
+      </div>
     );
 
   return (
@@ -172,7 +174,7 @@ export default function FileUpload() {
         id="style-1"
         className="box scrollbar w-full lg:w-auto lg:max-w-[250px] order-2 lg:order-1"
       >
-        <p className="text-blue font-bold mb-2">Files uploaded to Base: </p>
+        <h3 className="text-blue font-bold mb-2">Files uploaded to Base: </h3>
         {filesUploaded.map((file, index) => {
           return (
             <div className="mb-2 break-all" key={index}>
