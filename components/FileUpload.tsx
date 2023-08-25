@@ -9,6 +9,7 @@ import { ethers } from "ethers";
 import { useAccount } from "wagmi";
 import { log } from "console";
 import Library from "./Library";
+import WaitModal from "./WaitModal";
 type FileDetailsType = {
   name: string;
   type: string;
@@ -19,13 +20,15 @@ type FileDetailsType = {
 
 export default function FileUpload() {
   const [fileDetails, setFileDetails] = useState<FileDetailsType>(null);
-  const [disabled, setDisabled] = useState(true);
   const [filesUploaded, setFilesUploaded] = useState<any[]>([]);
   const signer = useEthersSigner();
   const account = useAccount();
   const [libraryAdded, setLibraryAdded] = useState(false);
   const [newAssetId, setNewAssetId] = useState<number | null>(null);
   const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalBody, setModalBody] = useState("");
 
   useEffect(() => {
     const logAssets = async () => {
@@ -43,7 +46,6 @@ export default function FileUpload() {
     };
 
     if (signer) {
-      setDisabled(false);
       logAssets();
     }
   }, [signer, account.address]);
@@ -56,24 +58,35 @@ export default function FileUpload() {
     signer
   );
 
+  console.log(isOpen);
+
   const addToLibrary = async () => {
     if (!fileDetails) return;
-
+    setIsOpen(true);
+    setModalTitle("Please sign the transaction to continue");
+    let tx;
     try {
       console.log(fileDetails.hash);
-      const tx = await contract.addAsset(
+      tx = await contract.addAsset(
         fileDetails.name,
         `0x${fileDetails.hash}`,
         fileDetails.chunks.length
       );
-
+    } catch (error) {
+      setModalTitle("Error during adding to Library");
+      handleContractError(error);
+      return; // If there's an error here, we don't want to continue
+    }
+    setModalTitle("Transaction Executing... please wait");
+    try {
       const receipt = await tx.wait();
       const assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
-      console.log(assetAddedEvent);
       const id = assetAddedEvent.args[0].toNumber();
       setLibraryAdded(true);
       setNewAssetId(id);
+      setIsOpen(false);
     } catch (error) {
+      setModalTitle("Error during transaction execution");
       handleContractError(error);
     }
   };
@@ -90,7 +103,7 @@ export default function FileUpload() {
       const chunkBytes = ethers.utils.hexlify(uint8Array);
 
       // Upload the chunk to the blockchain
-      console.log(newAssetId, index, chunkBytes)
+      console.log(newAssetId, index, chunkBytes);
       const tx = await contract.uploadChunk(newAssetId, index, chunkBytes);
       await tx.wait();
       setChunksUploadedCount((prev) => prev + 1);
@@ -109,7 +122,7 @@ export default function FileUpload() {
     }
   };
 
-  console.log(chunksUploadedCount, fileDetails?.chunks.length)
+  console.log(chunksUploadedCount, fileDetails?.chunks.length);
 
   const handleContractError = (e: any) => {
     if (e.message.includes("denied transaction signature")) {
@@ -146,84 +159,94 @@ export default function FileUpload() {
     }
   };
 
+  if (!signer)
+    return (
+      <h2 className="text-primary dark:text-primary-dark">
+        Connect your wallet to upload a file.
+      </h2>
+    );
+
   return (
-    <div className="flex items-center justify-center p-4">
-      <div className="my-4">
-        {signer && <p>Files uploaded to Base: </p>}
+    <div className="flex gap-4 flex-col lg:flex-row items-center lg:h-[70vh] justify-center p-4">
+      <div
+        id="style-1"
+        className="box scrollbar w-full lg:w-auto lg:max-w-[250px] order-2 lg:order-1"
+      >
+        <p className="text-blue font-bold mb-2">Files uploaded to Base: </p>
         {filesUploaded.map((file, index) => {
           return (
-            <div key={index}>
-              <p>{file.name}</p>
-              {/* <p>{file.expectedSHA256Hash}</p> */}
-            </div>
+            <div className="mb-2 break-all" key={index}>
+              <p className="font-bold">{file.name}</p>
+        <p>{file.expectedSHA256Hash}</p>
+        </div>
           );
         })}
       </div>
-      <section>
-        
-      {!libraryAdded && (
-    disabled ? (
-      <div>Connect your wallet to upload a file.</div>
-    ) : (
-      <>
-        <button
-          className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
-          onClick={handleClick}
-        >
-          {fileDetails ? "Choose different file" : "Upload a file"}
-        </button>
-        <input
-          type="file"
-          onChange={handleChange}
-          ref={hiddenFileInput}
-          style={{ display: "none" }} // Make the file input element invisible
-        />{" "}
-      </>
-    )
-  )}
-      {fileDetails && !libraryAdded && (
-        <section>
-          <div className="mt-4">
-            <h3>File Details:</h3>
-            <p className="font-bold  text-primary dark:text-primary-dark">
-              Name: <span>{fileDetails.name}</span>
-            </p>
-            <p className="text-primary font-bold dark:text-primary-dark break-all">
-              SHA256 Hash: <span>{fileDetails.hash}</span>
-            </p>
-            <p className="font-bold">
-              Type: <span>{fileDetails.type}</span>
-            </p>
-            <p className="font-bold">
-              Size: <span>{fileDetails.size} bytes</span>
-            </p>
-          </div>
-          <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">
-            <p>
-              {`File has been split into ${
-                fileDetails.chunks.length - 1
-              } chunks`}
-            </p>
+      <div
+        className={`box w-full lg:w-[80%]  order-1 lg:order-2 flex items-center justify-center ${
+          fileDetails ? "flex-col" : ""
+        }`}
+      >
+        {!libraryAdded && (
+          <>
             <button
-              className="text-primary dark:text-primary-dark  border-[1px] w-[8rem]"
-              onClick={addToLibrary}
+              className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
+              onClick={handleClick}
             >
-              Add to Library
+              {fileDetails ? "Choose different file" : "Upload a file"}
             </button>
-          </div>
-        </section>
-      )}
-        {libraryAdded &&
-        fileDetails &&
-        (
-          <button className="border-solid py-2 px-4 rounded border-[1px] cursor-pointer" disabled={chunksUploadedCount !== fileDetails.chunks.length} onClick={() => finalizeAsset(newAssetId!)}>
+            <input
+              type="file"
+              onChange={handleChange}
+              ref={hiddenFileInput}
+              style={{ display: "none" }} // Make the file input element invisible
+            />{" "}
+          </>
+        )}
+        {fileDetails && !libraryAdded && (
+          <section>
+            <div className="mt-4">
+              <h3 className="text-blue">File Details:</h3>
+              <p className="">
+                Name: <span>{fileDetails.name}</span>
+              </p>
+              <p className="break-all">
+                SHA256 Hash: <span>{fileDetails.hash}</span>
+              </p>
+              <p className="">
+                Type: <span>{fileDetails.type}</span>
+              </p>
+              <p className="">
+                Size: <span>{fileDetails.size} bytes</span>
+              </p>
+            </div>
+            <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">
+              <p>
+                {`File has been split into ${fileDetails.chunks.length} chunks`}
+              </p>
+              <button
+                className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
+                onClick={addToLibrary}
+              >
+                Add to Library
+              </button>
+            </div>
+          </section>
+        )}
+        {libraryAdded && fileDetails && (
+          <button
+            className="border-solid py-2 px-4 rounded border-[1px] cursor-pointer"
+            disabled={chunksUploadedCount !== fileDetails.chunks.length}
+            onClick={() => finalizeAsset(newAssetId!)}
+          >
             Finalize
           </button>
         )}
-      {libraryAdded && fileDetails && (
-        <Library uploadChunk={uploadChunk} chunks={fileDetails.chunks} />
-      )}
-      </section>
+        {libraryAdded && fileDetails && (
+          <Library uploadChunk={uploadChunk} chunks={fileDetails.chunks} />
+        )}
+        <WaitModal modalTitle={modalTitle} modalBody={modalBody} isOpen={isOpen} setIsOpen={setIsOpen} />
+      </div>
     </div>
   );
 }

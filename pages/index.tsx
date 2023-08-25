@@ -20,8 +20,8 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className="min-h-screen bg-white dark:bg-black">
-        <section className="p-4 md:p-8 lg:p-24">
+      <main className="min-h-screen bg-bg-primary dark:bg-bg-primary-dark">
+        <section className="max-w-[1600px] m-auto flex flex-col p-4 md:pt-8 px-8 lg:px-16 lg:pt-16">
           <div className="sm:flex justify-between mb-4">
             <ThemeSwitcher />
             <ConnectWallet />
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
           <Heading />
           <FileUpload />
         </section>
-        <footer className="bg-white dark:bg-black flex justify-center items-center">
+        <footer className="bg-bg-primary dark:bg-bg-primary-dark flex justify-center items-center">
           <p>OnChain Library powered by </p>
           <a
             href="https://layerr.xyz"

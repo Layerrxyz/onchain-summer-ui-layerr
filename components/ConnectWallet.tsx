@@ -35,13 +35,15 @@ export const ConnectWallet: FC = () => {
             {(() => {
               if (!connected) {
                 return (
+                  <div className="w-full flex justify-end">
                   <button
-                    className="bg-blue border-none py-2 px-6 rounded-xl font-bold text-white"
+                    className="bg-blue rounded-xl text-xs md:text-base border-none  px-4 py-1.5 lg:px-8 lg:py-2 text-white font-bold"
                     onClick={openConnectModal}
                     type="button"
                   >
                     Connect Wallet
                   </button>
+                  </div>
                 );
               }
               if (chain.unsupported) {
