@@ -47,7 +47,7 @@ button {
 }
 
 .box {
-  @apply rounded-xl p-8 bg-white dark:bg-[#1E1E1E] shadow-lg my-4 h-full
+  @apply rounded-xl p-2 md:p-4 lg:p-8 bg-white dark:bg-[#1E1E1E] shadow-lg my-4 h-full
 }
 
 .scrollbar {

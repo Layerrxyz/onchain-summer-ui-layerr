@@ -2,6 +2,8 @@ import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import type { AppProps } from "next/app";
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import {
   // arbitrum,
@@ -40,6 +42,8 @@ const wagmiConfig = createConfig({
   publicClient,
   webSocketPublicClient,
 });
+
+config.autoAddCss = false
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

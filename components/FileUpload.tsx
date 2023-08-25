@@ -15,7 +15,7 @@ type FileDetailsType = {
   type: string;
   size: number;
   hash: string;
-  chunks: Blob[];
+  chunks: Array<{ data: Blob; uploaded: boolean }>;
 } | null;
 
 export default function FileUpload() {
@@ -58,12 +58,11 @@ export default function FileUpload() {
     signer
   );
 
-  console.log(isOpen);
-
   const addToLibrary = async () => {
     if (!fileDetails) return;
     setIsOpen(true);
     setModalTitle("Please sign the transaction to continue");
+    setModalBody("This transaction creates an asset ID for your file.");
     let tx;
     try {
       console.log(fileDetails.hash);
@@ -73,9 +72,9 @@ export default function FileUpload() {
         fileDetails.chunks.length
       );
     } catch (error) {
-      setModalTitle("Error during adding to Library");
+      setIsOpen(false);
       handleContractError(error);
-      return; // If there's an error here, we don't want to continue
+      return;
     }
     setModalTitle("Transaction Executing... please wait");
     try {
@@ -86,29 +85,34 @@ export default function FileUpload() {
       setNewAssetId(id);
       setIsOpen(false);
     } catch (error) {
-      setModalTitle("Error during transaction execution");
+      setIsOpen(false);
       handleContractError(error);
     }
   };
 
   const uploadChunk = async (chunk: Blob, index: number) => {
-    try {
-      // Read the blob as an ArrayBuffer
-      const arrayBuffer = await new Response(chunk).arrayBuffer();
+    if (fileDetails) {
+      try {
+        // Read the blob as an ArrayBuffer
+        const arrayBuffer = await new Response(chunk).arrayBuffer();
 
-      // Convert the ArrayBuffer to a Uint8Array
-      const uint8Array = new Uint8Array(arrayBuffer);
+        // Convert the ArrayBuffer to a Uint8Array
+        const uint8Array = new Uint8Array(arrayBuffer);
 
-      // Convert the Uint8Array to a hex string
-      const chunkBytes = ethers.utils.hexlify(uint8Array);
+        // Convert the Uint8Array to a hex string
+        const chunkBytes = ethers.utils.hexlify(uint8Array);
 
-      // Upload the chunk to the blockchain
-      console.log(newAssetId, index, chunkBytes);
-      const tx = await contract.uploadChunk(newAssetId, index, chunkBytes);
-      await tx.wait();
-      setChunksUploadedCount((prev) => prev + 1);
-    } catch (error) {
-      handleContractError(error);
+        // Upload the chunk to the blockchain
+        console.log(newAssetId, index, chunkBytes);
+        const tx = await contract.uploadChunk(newAssetId, index, chunkBytes);
+        await tx.wait();
+        setChunksUploadedCount((prev) => prev + 1);
+        const updatedChunks = [...fileDetails.chunks];
+        updatedChunks[index].uploaded = true;
+        setFileDetails({ ...fileDetails, chunks: updatedChunks });
+      } catch (error) {
+        handleContractError(error);
+      }
     }
   };
 
@@ -161,15 +165,15 @@ export default function FileUpload() {
 
   if (!signer)
     return (
-  <div className="h-[50vh] items-center justify-center flex">
-      <h2 className="text-center text-primary dark:text-primary-dark">
-        Connect your wallet to upload a file.
-      </h2>
+      <div className="h-[50vh] items-center justify-center flex">
+        <h2 className="text-center text-primary dark:text-primary-dark">
+          Connect your wallet to upload a file.
+        </h2>
       </div>
     );
 
   return (
-    <div className="flex gap-4 flex-col lg:flex-row items-center lg:h-[70vh] justify-center p-4">
+    <div className="flex gap-4 flex-col lg:flex-row items-center lg:h-[70vh] justify-center md:p-4">
       <div
         id="style-1"
         className="box scrollbar w-full lg:w-auto lg:max-w-[250px] order-2 lg:order-1"
@@ -179,8 +183,8 @@ export default function FileUpload() {
           return (
             <div className="mb-2 break-all" key={index}>
               <p className="font-bold">{file.name}</p>
-        <p>{file.expectedSHA256Hash}</p>
-        </div>
+              <p>{file.expectedSHA256Hash}</p>
+            </div>
           );
         })}
       </div>
@@ -247,7 +251,12 @@ export default function FileUpload() {
         {libraryAdded && fileDetails && (
           <Library uploadChunk={uploadChunk} chunks={fileDetails.chunks} />
         )}
-        <WaitModal modalTitle={modalTitle} modalBody={modalBody} isOpen={isOpen} setIsOpen={setIsOpen} />
+        <WaitModal
+          modalTitle={modalTitle}
+          modalBody={modalBody}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
       </div>
     </div>
   );
