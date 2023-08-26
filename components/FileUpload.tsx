@@ -26,7 +26,7 @@ export default function FileUpload() {
   const account = useAccount();
   const [libraryAdded, setLibraryAdded] = useState(false);
   const [newAssetId, setNewAssetId] = useState<number | null>(null);
-  const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(9);
+  const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(0);
   const [isOpen, setIsOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalBody, setModalBody] = useState("");
@@ -120,8 +120,8 @@ export default function FileUpload() {
 
   const finalizeAsset = async (newAssetId: number) => {
     try {
-      // const tx = await contract.finalizeAsset(newAssetId);
-      // await tx.wait();
+      const tx = await contract.finalizeAsset(newAssetId);
+      await tx.wait();
       setShowSuccessBanner(true)
     } catch (error) {
       handleContractError(error);
