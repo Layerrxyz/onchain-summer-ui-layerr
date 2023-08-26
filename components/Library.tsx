@@ -9,7 +9,7 @@ interface LibraryProps {
 
 function Library({ chunks, uploadChunk }: LibraryProps) {    
   return (
-    <div className="my-4">
+    <div id="style-1" className="my-4 overflow-y-scroll scrollbar">
       {chunks.map((chunk:any, index:any) => {
         return <FileChunk key={index} uploaded={chunk.uploaded} uploadChunk={uploadChunk} chunk={chunk.data} chunkNumber={index} />;
       })}

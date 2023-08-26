@@ -10,6 +10,7 @@ import { useAccount } from "wagmi";
 import { log } from "console";
 import Library from "./Library";
 import WaitModal from "./WaitModal";
+import SuccessBanner from "./SuccessBanner";
 type FileDetailsType = {
   name: string;
   type: string;
@@ -25,10 +26,11 @@ export default function FileUpload() {
   const account = useAccount();
   const [libraryAdded, setLibraryAdded] = useState(false);
   const [newAssetId, setNewAssetId] = useState<number | null>(null);
-  const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(0);
+  const [chunksUploadedCount, setChunksUploadedCount] = useState<number>(9);
   const [isOpen, setIsOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalBody, setModalBody] = useState("");
+  const [showSuccessBanner, setShowSuccessBanner] = useState(false);
 
   useEffect(() => {
     const logAssets = async () => {
@@ -76,7 +78,7 @@ export default function FileUpload() {
       handleContractError(error);
       return;
     }
-    setModalTitle("Transaction Executing... please wait");
+    setModalTitle("Transaction Executing... Please Wait");
     try {
       const receipt = await tx.wait();
       const assetAddedEvent = contract.interface.parseLog(receipt.logs[0]);
@@ -118,9 +120,9 @@ export default function FileUpload() {
 
   const finalizeAsset = async (newAssetId: number) => {
     try {
-      const tx = await contract.finalizeAsset(newAssetId);
-      await tx.wait();
-      console.log("Asset uploaded successfully");
+      // const tx = await contract.finalizeAsset(newAssetId);
+      // await tx.wait();
+      setShowSuccessBanner(true)
     } catch (error) {
       handleContractError(error);
     }
@@ -190,9 +192,11 @@ export default function FileUpload() {
       </div>
       <div
         className={`box w-full lg:w-[80%]  order-1 lg:order-2 flex items-center justify-center ${
-          fileDetails ? "flex-col" : ""
+          fileDetails ? "flex-col" : "flex-col"
         }`}
       >
+          {showSuccessBanner && (
+       <SuccessBanner/>)}
         {!libraryAdded && (
           <>
             <button
@@ -209,7 +213,8 @@ export default function FileUpload() {
             />{" "}
           </>
         )}
-        {fileDetails && !libraryAdded && (
+      
+        {fileDetails && (
           <section>
             <div className="mt-4">
               <h3 className="text-blue">File Details:</h3>
@@ -226,22 +231,31 @@ export default function FileUpload() {
                 Size: <span>{fileDetails.size} bytes</span>
               </p>
             </div>
-            <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">
-              <p>
-                {`File has been split into ${fileDetails.chunks.length} chunks`}
-              </p>
-              <button
-                className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
-                onClick={addToLibrary}
-              >
-                Add to Library
-              </button>
-            </div>
+            {!libraryAdded && (
+              <div className=" w-full mt-8 items-center flex flex-col gap-4 justify-center">
+                {fileDetails.chunks.length > 1 && (
+                  <p>
+                    {`Due to onchain storage limits, this file will need to be uploaded in ${fileDetails.chunks.length} parts`}
+                  </p>
+                )}
+                <button
+                  className="text-primary dark:text-primary-dark border-[1px] border-solid px-6 py-2"
+                  onClick={addToLibrary}
+                >
+                  Add to Library
+                </button>
+              </div>
+            )}
           </section>
         )}
         {libraryAdded && fileDetails && (
           <button
-            className="border-solid py-2 px-4 rounded border-[1px] cursor-pointer"
+            className={`border-solid py-2 px-4 rounded border cursor-pointer 
+          ${
+            chunksUploadedCount !== fileDetails.chunks.length
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed opacity-70"
+              : "bg-blue text-white border-none"
+          }`}
             disabled={chunksUploadedCount !== fileDetails.chunks.length}
             onClick={() => finalizeAsset(newAssetId!)}
           >

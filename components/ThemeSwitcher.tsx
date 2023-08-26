@@ -24,7 +24,7 @@ export default function ThemeSwitcher() {
   return (
     <div className="flex items-center gap-2 mb-2 sm:mb-0">
       <Image alt="moon icon" src={Moon} onClick={()=>{setDarkMode(true)}} className="moon" />
-      <div className="bg-slider-grey w-14 h-6 rounded-xl flex items-center  transition-all ">
+      <div  onClick={()=>{setDarkMode(!darkMode)}} className="bg-slider-grey w-14 h-6 rounded-xl flex items-center  transition-all ">
         <div
           onClick={()=>{setDarkMode(!darkMode)}}
           className="bg-white cursor-pointer rounded-full w-4 h-4 m-1 translate-x-8 dark:translate-x-0 transition-all"
