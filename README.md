@@ -1,29 +1,24 @@
-This is a [RainbowKit](https://rainbowkit.com) + [wagmi](https://wagmi.sh) + [Next.js](https://nextjs.org/) project bootstrapped with [`create-rainbowkit`](https://github.com/rainbow-me/rainbowkit/tree/main/packages/create-rainbowkit).
+## Features
+### This is a simple user interface to run some of the main functions required to store art files to the blockchain.
+- Unowned, immutable primative for storing file assets onchain.
+- Utilizes SSTORE2 for onchain storage with deterministic CREATE2 addresses to prevent duplicate chunks of data from being stored.
+- Data chunks can be added by uploading bytes or providing a storage pointer to the existing SSTORE2 address that the data is stored at.
+- Assets may be finalized by uploader to prevent changes.
+- Asset SHA256 can be validated onchain to be added to validated hash catalog.
+- Asset catalog is searchable by name, uploader, expected SHA256 hash and validated SHA256 hash.
+- Assets can be returned as bytes, string or Base64 encoded string.
+- Storage is compatible with [scripty.sol](https://int-art.gitbook.io/scripty.sol/ "ScriptyBuilder")
 
 ## Getting Started
 
-First, run the development server:
+To run the development server, run:
+
+```bash
+npm i
+```
 
 ```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-## Learn More
-
-To learn more about this stack, take a look at the following resources:
-
-- [RainbowKit Documentation](https://rainbowkit.com) - Learn how to customize your wallet connection flow.
-- [wagmi Documentation](https://wagmi.sh) - Learn how to interact with Ethereum.
-- [Next.js Documentation](https://nextjs.org/docs) - Learn how to build a Next.js application.
-
-You can check out [the RainbowKit GitHub repository](https://github.com/rainbow-me/rainbowkit) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
