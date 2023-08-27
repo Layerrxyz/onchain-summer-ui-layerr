@@ -8,7 +8,7 @@ function WelcomeMessage() {
             <div className='flex flex-col gap-2'>
             <p className='text-grey'><span className='welcome-body'>Upload Your File:</span> Simply click on the <b>Upload File</b> button and select the file you wish to store on the blockchain.</p>
             <p className='text-grey'><span className='welcome-body'>Chunking Process:</span> If your file exceeds 24KB, our system will automatically split it into manageable 24KB chunks. This ensures that your file is uploaded efficiently and economically.</p>
-            <p className='text-grey'><span className='welcome-body'> Blockchain Upload:</span> Once chunked (if needed), your file or its chunks will be uploaded to the blockchain. You&apos;ll receive a unique asset ID for every uploaded file.</p>
+            <p className='text-grey'><span className='welcome-body'> Blockchain Upload:</span> Once chunked (if needed), your file or its chunks will be uploaded to the blockchain. Each chunk will need to be uploaded seperately and accompanied by a transaction signature.</p>
             <p className='text-grey'> <span className='welcome-body'>Finalize:</span> After all chunks (if any) are uploaded, you will need to finalize your asset. This ensures that your file is securely and permanently stored on the blockchain.</p>
             </div>
         </div >
