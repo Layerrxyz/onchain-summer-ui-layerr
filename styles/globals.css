@@ -34,9 +34,6 @@ a {
 h3 {
   @apply font-bold text-lg }
 
-p {
-  @apply text-primary dark:text-primary-dark
-}
 
 span {
   @apply font-normal text-grey
@@ -47,7 +44,7 @@ button {
 }
 
 .box {
-  @apply rounded-xl p-2 md:p-4 lg:p-8 bg-white dark:bg-[#1E1E1E] shadow-lg my-4 h-full
+  @apply justify-center rounded-xl px-2 py-6 md:px-4 lg:p-8 bg-white dark:bg-[#1E1E1E] shadow-lg my-4 h-full
 }
 
 .scrollbar {
@@ -75,4 +72,8 @@ button {
   cursor: not-allowed; /* indicate not clickable */
   opacity: 0.7; /* a bit transparent to appear as if it's "faded out" */
   pointer-events: none; /* make sure it's not clickable */
+}
+
+.welcome-body {
+  @apply text-primary dark:text-primary-dark text-sm md:text-base
 }

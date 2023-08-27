@@ -1,6 +1,10 @@
 import React from 'react'
 
-function SuccessBanner() {
+interface SuccessBannerProps {
+  setShowSuccessBanner: any;
+}
+
+function SuccessBanner( { setShowSuccessBanner }: SuccessBannerProps) {
   return (
     <div className="max-w-screen-xl w-full px-2 sm:px-4">
       <div className="p-2 rounded-lg bg-green-50 shadow-lg sm:p-3">
@@ -16,13 +20,13 @@ function SuccessBanner() {
           </div>
           <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
             <div className="rounded-md shadow-sm">
-              <a href="https://tailwindui.com?utm_source=tailwindcss&amp;utm_medium=footer-banner" className="flex items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-900 bg-white hover:text-gray-800 focus:outline-none focus:underline">
+              {/* <a href="https://tailwindui.com?utm_source=tailwindcss&amp;utm_medium=footer-banner" className="flex items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-gray-900 bg-white hover:text-gray-800 focus:outline-none focus:underline">
                 Download File
-              </a>
+              </a> */}
             </div>
           </div>
           <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-2">
-            <button type="button" className="-mr-1 flex p-2 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-800">
+            <button onClick={()=>{setShowSuccessBanner(false)}} type="button" className="-mr-1 flex p-2 rounded-md hover:bg-gray-400 focus:outline-none focus:bg-gray-800">
               <svg className="h-6 w-6 text-gray-300" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
