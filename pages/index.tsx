@@ -30,7 +30,7 @@ const Home: NextPage = () => {
           <FileUpload />
         </section>
         <footer className="bg-bg-primary dark:bg-bg-primary-dark flex justify-center items-center">
-          <p>Onchain Library powered by </p>
+          <p className="text-primary dark:text-primary-dark">Onchain Library powered by </p>
           <a
             href="https://layerr.xyz"
             className="text-primary dark:text-primary-dark ml-1"

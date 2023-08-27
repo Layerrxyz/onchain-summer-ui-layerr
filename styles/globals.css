@@ -18,6 +18,10 @@ a {
   box-sizing: border-box;
 }
 
+p {
+  @apply text-sm md:text-base
+}
+
 .moon path {
   @apply dark:fill-white;
 }
